@@ -1,6 +1,6 @@
 package com.mugosimon.user_restful_api.controller;
 
-import com.mugosimon.user_restful_api.entity.User;
+import com.mugosimon.user_restful_api.dto.UserDto;
 import com.mugosimon.user_restful_api.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,32 +16,32 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/createUser")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
+    public ResponseEntity<String> createUser(@RequestBody UserDto user) {
         return userService.createUser(user);
     }
 
     @GetMapping("/allUsers")
-    public ResponseEntity<List<User>> fetchAllUsers() {
+    public ResponseEntity<List<UserDto>> fetchAllUsers() {
         return userService.fetchAllUsers();
     }
 
     @GetMapping("/fetchById")
-    public ResponseEntity<User> fetchUserById(@RequestParam Long id) {
+    public ResponseEntity<UserDto> fetchUserById(@RequestParam Long id) {
         return userService.fetchUserById(id);
     }
 
     @GetMapping("/fetchByName")
-    public ResponseEntity<List<User>> fetchUserByName(@RequestParam String name) {
+    public ResponseEntity<List<UserDto>> fetchUserByName(@RequestParam String name) {
         return userService.fetchUserByName(name);
     }
 
     @GetMapping("/fetchByEmail")
-    public ResponseEntity<User> fetchUserByEmail(@RequestParam String email) {
+    public ResponseEntity<UserDto> fetchUserByEmail(@RequestParam String email) {
         return userService.fetchUserByEmail(email);
     }
 
     @PutMapping("/modify")
-    public ResponseEntity<String> modifyUser(@RequestParam Long id, @RequestBody User updatedUser) {
+    public ResponseEntity<String> modifyUser(@RequestParam Long id, @RequestBody UserDto updatedUser) {
         return userService.modifyUser(id, updatedUser);
     }
 
