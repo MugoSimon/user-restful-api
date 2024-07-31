@@ -1,12 +1,12 @@
-package com.mugosimon.user_restful_api.service.impl;
+package com.mugosimon.user_restful_api.service.Impl;
 
 import com.mugosimon.user_restful_api.dto.UserDto;
 import com.mugosimon.user_restful_api.entity.User;
+import com.mugosimon.user_restful_api.mapper.AutoUserMapper;
 import com.mugosimon.user_restful_api.repo.UserRepository;
 import com.mugosimon.user_restful_api.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
 
     @Override
     public ResponseEntity<String> createUser(UserDto userDto) {
@@ -32,7 +31,7 @@ public class UserServiceImpl implements UserService {
                 return ResponseEntity.badRequest().body("User with this email already exists.");
             }
 
-            User user = modelMapper.map(userDto, User.class);
+            User user = AutoUserMapper.MAPPER.mapToUser(userDto);
             userRepository.save(user);
 
             log.info("User created successfully: {}", user);
@@ -53,14 +52,12 @@ public class UserServiceImpl implements UserService {
             }
             log.info("Fetched all users");
             List<UserDto> userDtos = users.stream()
-                    .map(user -> modelMapper.map(user, UserDto.class))
+                    .map(AutoUserMapper.MAPPER::maptoUserDto)
                     .collect(Collectors.toList());
             return ResponseEntity.ok(userDtos);
         } catch (Exception e) {
             log.error("Error fetching all users: {}", e.getMessage());
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(List.of());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
         }
     }
 
@@ -73,7 +70,7 @@ public class UserServiceImpl implements UserService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
             log.info("Fetched user by ID: {}", id);
-            return ResponseEntity.ok(modelMapper.map(user.get(), UserDto.class));
+            return ResponseEntity.ok(AutoUserMapper.MAPPER.maptoUserDto(user.get()));
         } catch (Exception e) {
             log.error("Error fetching user by ID: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -90,7 +87,7 @@ public class UserServiceImpl implements UserService {
             }
             log.info("Fetched users by name: {}", name);
             List<UserDto> userDtos = users.stream()
-                    .map(user -> modelMapper.map(user, UserDto.class))
+                    .map(AutoUserMapper.MAPPER::maptoUserDto)
                     .collect(Collectors.toList());
             return ResponseEntity.ok(userDtos);
         } catch (Exception e) {
@@ -108,7 +105,7 @@ public class UserServiceImpl implements UserService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
             log.info("Fetched user by email: {}", email);
-            return ResponseEntity.ok(modelMapper.map(user.get(), UserDto.class));
+            return ResponseEntity.ok(AutoUserMapper.MAPPER.maptoUserDto(user.get()));
         } catch (Exception e) {
             log.error("Error fetching user by email: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -121,16 +118,17 @@ public class UserServiceImpl implements UserService {
         try {
             Optional<User> existingUser = userRepository.findById(id);
             if (existingUser.isEmpty()) {
-                return ResponseEntity.badRequest().body("Status Code: 400, Message: User not found.");
+                return ResponseEntity.badRequest().body("User not found.");
             }
             User user = existingUser.get();
-            modelMapper.map(updatedUserDto, user);
+            user = AutoUserMapper.MAPPER.mapToUser(updatedUserDto);
+            user.setId(id); // Ensure the ID remains unchanged
             userRepository.save(user);
             log.info("User modified successfully: {}", user);
-            return ResponseEntity.ok("Status Code: 200, Message: User modified successfully.");
+            return ResponseEntity.ok("User modified successfully.");
         } catch (Exception e) {
             log.error("Error modifying user: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Status Code: 500, Message: Error modifying user.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error modifying user.");
         }
     }
 
@@ -140,14 +138,14 @@ public class UserServiceImpl implements UserService {
         try {
             Optional<User> existingUser = userRepository.findById(id);
             if (existingUser.isEmpty()) {
-                return ResponseEntity.badRequest().body("Status Code: 400, Message: User not found.");
+                return ResponseEntity.badRequest().body("User not found.");
             }
             userRepository.deleteById(id);
             log.info("User deleted successfully: {}", id);
-            return ResponseEntity.ok("Status Code: 200, Message: User deleted successfully.");
+            return ResponseEntity.ok("User deleted successfully.");
         } catch (Exception e) {
             log.error("Error deleting user: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Status Code: 500, Message: Error deleting user.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user.");
         }
     }
 }
