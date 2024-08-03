@@ -1,0 +1,401 @@
+{
+	"info": {
+		"_postman_id": "0665782a-a374-424a-b929-d107344888ef",
+		"name": "User-Restful",
+		"description": "Restful-api understanding using User Dummies",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33080141"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Michael\",\r\n    \"lastName\": \"Michaels\",\r\n    \"email\": \"michael.michaels@example.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7074/api/users/createUser",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7074",
+					"path": [
+						"api",
+						"users",
+						"createUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch All Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields - id, firstName, lastName, and email\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    responseData.forEach(function(user) {",
+							"        pm.expect(user).to.have.property('id');",
+							"        pm.expect(user).to.have.property('firstName');",
+							"        pm.expect(user).to.have.property('lastName');",
+							"        pm.expect(user).to.have.property('email');",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Email is in a valid format\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  responseData.forEach(function(user) {",
+							"    pm.expect(user.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);",
+							"  });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type header is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response is an array with at least one element\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array').that.is.not.empty;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7074/api/users/allUsers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7074",
+					"path": [
+						"api",
+						"users",
+						"allUsers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch User By Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields - id, firstName, lastName, and email\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.have.property('id');",
+							"    pm.expect(responseData).to.have.property('firstName');",
+							"    pm.expect(responseData).to.have.property('lastName');",
+							"    pm.expect(responseData).to.have.property('email');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Email is in a valid format\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.email).to.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Id should be a non-negative integer\", function () {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.id).to.be.a('number').and.to.be.at.least(0, \"Id should be a non-negative integer\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"FirstName and LastName should be non-empty strings\", function () {",
+							"  const responseData = pm.response.json();",
+							"",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.firstName).to.be.a('string').and.to.have.lengthOf.at.least(1, \"FirstName should not be empty\");",
+							"  pm.expect(responseData.lastName).to.be.a('string').and.to.have.lengthOf.at.least(1, \"LastName should not be empty\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7074/api/users/fetchById?id=7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7074",
+					"path": [
+						"api",
+						"users",
+						"fetchById"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch User by Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Validate the response array structure\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    responseData.forEach(function(user) {",
+							"        pm.expect(user).to.be.an('object');",
+							"        pm.expect(user.id).to.be.a('number');",
+							"        pm.expect(user.firstName).to.be.a('string');",
+							"        pm.expect(user.lastName).to.be.a('string');",
+							"        pm.expect(user.email).to.be.a('string');",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"First Name and Last Name must be non-empty strings\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('array');",
+							"  responseData.forEach(function(user) {",
+							"    pm.expect(user.firstName).to.be.a('string').and.to.have.lengthOf.at.least(1, \"First Name should not be empty\");",
+							"    pm.expect(user.lastName).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Last Name should not be empty\");",
+							"  });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Email is in a valid format\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    responseData.forEach(function(user) {",
+							"        pm.expect(user.email).to.match(/\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b/);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7074/api/users/fetchByName?name=Davis",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7074",
+					"path": [
+						"api",
+						"users",
+						"fetchByName"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Davis"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch User by Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields - id, firstName, lastName, and email\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.have.property('id');",
+							"    pm.expect(responseData).to.have.property('firstName');",
+							"    pm.expect(responseData).to.have.property('lastName');",
+							"    pm.expect(responseData).to.have.property('email');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Email is in a valid format\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.email).to.be.a('string').and.to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/, \"Email should be in a valid format\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type header is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Id is a non-negative integer\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.id).to.exist.and.to.be.a('number');",
+							"  pm.expect(responseData.id).to.be.at.least(0);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7074/api/users/fetchByEmail?email=david.williams@example.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7074",
+					"path": [
+						"api",
+						"users",
+						"fetchByEmail"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "david.williams@example.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify User",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 6,\r\n    \"firstName\": \"David\",\r\n    \"lastName\": \"Davis\",\r\n    \"email\": \"david.williams@example.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7074/api/users/modify?id=6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7074",
+					"path": [
+						"api",
+						"users",
+						"modify"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7074/api/users/delete?id=3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7074",
+					"path": [
+						"api",
+						"users",
+						"delete"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
