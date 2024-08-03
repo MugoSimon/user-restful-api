@@ -35,7 +35,7 @@ The **User-Restful API** project provides a RESTful service for managing user da
 
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/yourusername/user-restful-api.git
+    git clone https://github.com/mugosimon/user-restful-api.git
     cd user-restful-api
     ```
 
@@ -186,31 +186,32 @@ The service will be available at `http://localhost:7074`.
   ```
 
 ## Postman Collection
+A Postman collection named User-Restful is available for testing the API. The JSON file for this collection is saved in the templates folder within the resources directory. It includes predefined requests for each endpoint, along with tests to validate responses.
 
-A Postman collection named **User-Restful** is available for testing the API. It includes predefined requests for each endpoint, along with tests to validate responses.
 
 ### Importing the Collection
+To import the collection into Postman:
 
-1. Open Postman.
-2. Click on `Import`.
-3. Select the `User-Restful.postman_collection.json` file.
-4. Click `Import`.
+### Open Postman.
+1. Click on Import in the top left corner.
+2. Select the Upload Files tab.
+3. Navigate to the templates folder in the resources directory of the project.
+4. Select the User-Restful.postman_collection.json file.
+5. Click Import.
 
 ### Using the Collection
+Ensure the API server is running locally on port 7074.
+Use the predefined requests in the collection to interact with the API.
+Validate responses using the built-in tests provided in the collection.
 
-- Ensure the API server is running locally on port `7074`.
-- Use the predefined requests in the collection to interact with the API.
-- Validate responses using the built-in tests provided in the collection.
-
-## Testing
-
+### Testing
 To run the tests included in the Postman collection:
 
 1. Open the Postman collection.
 2. Click on the collection name.
-3. Click on `Run` to open the Collection Runner.
+3. Click on Run to open the Collection Runner.
 4. Select the desired environment (if any).
-5. Click on `Start Test`.
+5. Click on Start Test.
 
 ## Contributing
 
