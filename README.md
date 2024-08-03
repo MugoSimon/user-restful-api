@@ -1,4 +1,4 @@
-# User-Restful API Project
+# User-Restful API
 
 ## Overview
 
