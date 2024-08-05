@@ -7,17 +7,19 @@ import java.util.List;
 
 public interface UserService {
 
-    ResponseEntity<String> createUser(UserDto user);
+    UserDto createUser(UserDto user);
 
-    ResponseEntity<List<UserDto>> fetchAllUsers();
+    List<UserDto> addMultipleUsers(List<UserDto> usersDto);
 
-    ResponseEntity<UserDto> fetchUserById(Long id);
+    List<UserDto> fetchAllUsers();
 
-    ResponseEntity<List<UserDto>> fetchUserByName(String name);
+    UserDto fetchUserById(Long id);
 
-    ResponseEntity<UserDto> fetchUserByEmail(String email);
+    List<UserDto> fetchUserByName(String name);
 
-    ResponseEntity<String> modifyUser(Long id, UserDto updatedUser);
+    UserDto fetchUserByEmail(String email);
 
-    ResponseEntity<String> deleteUser(Long id);
+    UserDto modifyUser(Long id, UserDto updatedUser);
+
+    String deleteUser(Long id);
 }

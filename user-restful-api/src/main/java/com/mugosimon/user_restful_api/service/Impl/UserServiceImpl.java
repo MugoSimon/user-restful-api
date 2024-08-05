@@ -2,6 +2,7 @@ package com.mugosimon.user_restful_api.service.Impl;
 
 import com.mugosimon.user_restful_api.dto.UserDto;
 import com.mugosimon.user_restful_api.entity.User;
+import com.mugosimon.user_restful_api.exception.ResourceNotFoundException;
 import com.mugosimon.user_restful_api.mapper.AutoUserMapper;
 import com.mugosimon.user_restful_api.repo.UserRepository;
 import com.mugosimon.user_restful_api.service.UserService;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,129 +26,182 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public ResponseEntity<String> createUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         log.info("createUser method called with user: {}", userDto.getFirstName());
         try {
             Optional<User> existingUser = userRepository.findByEmail(userDto.getEmail());
             if (existingUser.isPresent()) {
-                return ResponseEntity.badRequest().body("User with this email already exists.");
+                log.warn("User with this email already exists: {}", userDto.getEmail());
+                throw new RuntimeException("User with this email already exists.");
             }
 
             User user = AutoUserMapper.MAPPER.mapToUser(userDto);
             userRepository.save(user);
 
             log.info("User created successfully: {}", user);
-            return ResponseEntity.status(HttpStatus.OK).body("User created successfully.");
+            return AutoUserMapper.MAPPER.maptoUserDto(user);
         } catch (Exception e) {
             log.error("Error creating user: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Message: Error creating user.");
+            throw new RuntimeException("Error creating user.", e); // or another custom exception
         }
     }
 
     @Override
-    public ResponseEntity<List<UserDto>> fetchAllUsers() {
+    public List<UserDto> addMultipleUsers(List<UserDto> usersDto) {
+        log.info("addMultipleUsers method called with users: {}", usersDto.size());
+        List<UserDto> createdUsers = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+
+        try {
+            for (UserDto userDto : usersDto) {
+                log.info("Processing user: {}", userDto.getFirstName());
+
+                Optional<User> existingUser = userRepository.findByEmail(userDto.getEmail());
+                if (existingUser.isPresent()) {
+                    String errorMsg = "User with email " + userDto.getEmail() + " already exists.";
+                    log.warn(errorMsg);
+                    errors.add(errorMsg);
+                    continue;
+                }
+
+                User user = AutoUserMapper.MAPPER.mapToUser(userDto);
+                userRepository.save(user);
+                createdUsers.add(AutoUserMapper.MAPPER.maptoUserDto(user));
+                log.info("User created successfully: {}", user);
+            }
+
+            if (!errors.isEmpty()) {
+                log.warn("Some users were not created: {}", errors);
+                return createdUsers; // Return successfully created users even if some errors occurred
+            }
+
+            return createdUsers;
+        } catch (Exception e) {
+            log.error("Error adding multiple users: {}", e.getMessage());
+            throw new RuntimeException("Error adding multiple users.", e); // or another custom exception
+        }
+    }
+
+    @Override
+    public List<UserDto> fetchAllUsers() {
         log.info("fetchAllUsers method called");
         try {
             List<User> users = userRepository.findAll();
             if (users.isEmpty()) {
-                return ResponseEntity.ok().body(List.of());
+                log.info("No users found");
+                return Collections.emptyList();
             }
             log.info("Fetched all users");
-            List<UserDto> userDtos = users.stream()
+            return users.stream()
                     .map(AutoUserMapper.MAPPER::maptoUserDto)
                     .collect(Collectors.toList());
-            return ResponseEntity.ok(userDtos);
         } catch (Exception e) {
             log.error("Error fetching all users: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
+            throw new RuntimeException("Error fetching all users.", e); // or another custom exception
         }
     }
 
     @Override
-    public ResponseEntity<UserDto> fetchUserById(Long id) {
+    public UserDto fetchUserById(Long id) {
         log.info("fetchUserById method called with ID: {}", id);
         try {
-            Optional<User> user = userRepository.findById(id);
-            if (user.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            }
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
             log.info("Fetched user by ID: {}", id);
-            return ResponseEntity.ok(AutoUserMapper.MAPPER.maptoUserDto(user.get()));
+            return AutoUserMapper.MAPPER.maptoUserDto(user);
+        } catch (ResourceNotFoundException e) {
+            log.error("User not found with ID: {}", id);
+            throw e; // Re-throwing the custom exception for handling at a higher level
         } catch (Exception e) {
             log.error("Error fetching user by ID: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            throw new RuntimeException("Error fetching user by ID.", e); // or another custom exception
         }
     }
 
     @Override
-    public ResponseEntity<List<UserDto>> fetchUserByName(String name) {
+    public List<UserDto> fetchUserByName(String name) {
         log.info("fetchUserByName method called with name: {}", name);
         try {
             List<User> users = userRepository.findByFirstnameOrLastname(name);
             if (users.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
+                log.info("No users found with name: {}", name);
+                return Collections.emptyList(); // Return an empty list if no users are found
             }
+
             log.info("Fetched users by name: {}", name);
-            List<UserDto> userDtos = users.stream()
+            return users.stream()
                     .map(AutoUserMapper.MAPPER::maptoUserDto)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(userDtos);
+                    .collect(Collectors.toList()); // Map and collect to List<UserDto>
         } catch (Exception e) {
-            log.error("Error fetching users by name: {}", name, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
+            log.error("Error fetching users by name: {}", e.getMessage());
+            throw new RuntimeException("Error fetching users by name.", e); // or another custom exception
         }
     }
 
     @Override
-    public ResponseEntity<UserDto> fetchUserByEmail(String email) {
+    public UserDto fetchUserByEmail(String email) {
         log.info("fetchUserByEmail method called with email: {}", email);
         try {
-            Optional<User> user = userRepository.findByEmail(email);
-            if (user.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+            if (optionalUser.isEmpty()) {
+                log.info("No user found with email: {}", email);
             }
+
+            User user = optionalUser.get();
             log.info("Fetched user by email: {}", email);
-            return ResponseEntity.ok(AutoUserMapper.MAPPER.maptoUserDto(user.get()));
+            return AutoUserMapper.MAPPER.maptoUserDto(user);
+        } catch (ResourceNotFoundException e) {
+            log.error("User not found with email: {}", email);
+            throw e; // Re-throwing the custom exception for handling at a higher level
         } catch (Exception e) {
             log.error("Error fetching user by email: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            throw new RuntimeException("Error fetching user by email.", e); // or another custom exception
         }
     }
 
     @Override
-    public ResponseEntity<String> modifyUser(Long id, UserDto updatedUserDto) {
+    public UserDto modifyUser(Long id, UserDto updatedUserDto) {
         log.info("modifyUser method called with ID: {}", id);
         try {
-            Optional<User> existingUser = userRepository.findById(id);
-            if (existingUser.isEmpty()) {
-                return ResponseEntity.badRequest().body("User not found.");
-            }
-            User user = existingUser.get();
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+            // Update the user details
             user = AutoUserMapper.MAPPER.mapToUser(updatedUserDto);
-            user.setId(id); // Ensure the ID remains unchanged
+            user.setId(id);  // Ensure the ID remains unchanged
             userRepository.save(user);
+
             log.info("User modified successfully: {}", user);
-            return ResponseEntity.ok("User modified successfully.");
+            return AutoUserMapper.MAPPER.maptoUserDto(user);
+        } catch (ResourceNotFoundException e) {
+            log.error("User not found with ID: {}", id);
+            throw e;
         } catch (Exception e) {
-            log.error("Error modifying user: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error modifying user.");
+            log.error("Error modifying user with ID: {}", id, e);
+            throw new RuntimeException("Error modifying user.", e);
         }
     }
 
+
     @Override
-    public ResponseEntity<String> deleteUser(Long id) {
+    public String deleteUser(Long id) {
         log.info("deleteUser method called with ID: {}", id);
         try {
-            Optional<User> existingUser = userRepository.findById(id);
-            if (existingUser.isEmpty()) {
-                return ResponseEntity.badRequest().body("User not found.");
+            if (!userRepository.existsById(id)) {
+                log.info("User not found with ID: {}", id);
+                throw new ResourceNotFoundException("User", "id", id);
             }
+
             userRepository.deleteById(id);
-            log.info("User deleted successfully: {}", id);
-            return ResponseEntity.ok("User deleted successfully.");
+            log.info("User deleted successfully with ID: {}", id);
+            return "User deleted successfully.";
+        } catch (ResourceNotFoundException e) {
+            log.error("User not found with ID: {}", id);
+            throw e; // Re-throwing the custom exception for handling at a higher level
         } catch (Exception e) {
-            log.error("Error deleting user: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user.");
+            log.error("Error deleting user with ID: {}", id, e);
+            throw new RuntimeException("Error deleting user.", e); // or another custom exception
         }
     }
 }
