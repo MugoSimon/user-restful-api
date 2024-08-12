@@ -1,7 +1,6 @@
 package com.mugosimon.user_restful_api.service;
 
 import com.mugosimon.user_restful_api.dto.UserDto;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 

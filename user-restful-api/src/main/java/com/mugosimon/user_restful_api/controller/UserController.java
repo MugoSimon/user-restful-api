@@ -4,6 +4,7 @@ import com.mugosimon.user_restful_api.dto.UserDto;
 import com.mugosimon.user_restful_api.exception.ErrorDetails;
 import com.mugosimon.user_restful_api.exception.ResourceNotFoundException;
 import com.mugosimon.user_restful_api.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +22,16 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/createUser")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+
+        UserDto createdUser = userService.createUser(userDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @PostMapping("/addMultiple")
-    public ResponseEntity<List<UserDto>> addMultipleUsers(@RequestBody List<UserDto> usersDto) {
+    public ResponseEntity<List<UserDto>> addMultipleUsers(@RequestBody @Valid List<UserDto> usersDto) {
         List<UserDto> addedUsers = userService.addMultipleUsers(usersDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(addedUsers);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedUsers);
 
     }
 
@@ -42,36 +45,36 @@ public class UserController {
     @GetMapping("/fetchById")
     public ResponseEntity<UserDto> fetchUserById(@RequestParam Long id) {
 
-            UserDto user = userService.fetchUserById(id);
-            return ResponseEntity.ok(user);
+        UserDto user = userService.fetchUserById(id);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/fetchByName")
     public ResponseEntity<List<UserDto>> fetchUserByName(@RequestParam String name) {
 
-            List<UserDto> users = userService.fetchUserByName(name);
-            return ResponseEntity.ok(users);
+        List<UserDto> users = userService.fetchUserByName(name);
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/fetchByEmail")
     public ResponseEntity<UserDto> fetchUserByEmail(@RequestParam String email) {
 
-            UserDto user = userService.fetchUserByEmail(email);
-            return ResponseEntity.ok(user);
+        UserDto user = userService.fetchUserByEmail(email);
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/modify")
     public ResponseEntity<UserDto> modifyUser(@RequestParam Long id, @RequestBody UserDto updatedUser) {
 
-            UserDto modifiedUser = userService.modifyUser(id, updatedUser);
-            return ResponseEntity.ok(modifiedUser);
+        UserDto modifiedUser = userService.modifyUser(id, updatedUser);
+        return ResponseEntity.ok(modifiedUser);
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(@RequestParam Long id) {
 
-            String response = userService.deleteUser(id);
-            return ResponseEntity.ok(response);
+        String response = userService.deleteUser(id);
+        return ResponseEntity.ok(response);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
