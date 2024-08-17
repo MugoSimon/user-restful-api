@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> fetchAllUsers() {
-        log.info("fetchAllUsers method called");
+        log.info("fetch All Users method called");
         try {
             List<User> users = userRepository.findAll();
             if (users.isEmpty()) {

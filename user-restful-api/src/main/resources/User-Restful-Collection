@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "0665782a-a374-424a-b929-d107344888ef",
 		"name": "User-Restful",
-		"description": "Restful-api understanding using User Dummies",
+		"description": "# User-Restful API Collection\n\n## Overview\n\nThis Postman collection, named **User-Restful**, is designed to provide a comprehensive understanding of a RESTful API that manages user data. The API offers endpoints for creating, fetching, updating, and deleting user records. The collection includes predefined requests for testing and validating the functionality of each endpoint.\n\n## Collection Information\n\n- **Name**: User-Restful\n    \n- **Description**: Restful-api understanding using User Dummies\n    \n- **Schema**: [Postman Collection Schema v2.1.0](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)\n    \n\n## Endpoints\n\n### 1\\. Create User\n\n- **Method**: POST\n    \n- **URL**: `http://localhost:7074/api/users/createUser`\n    \n- **Description**: Creates a new user with the provided `firstName`, `lastName`, and `email`.\n    \n- { \"firstName\": \"Michael\", \"lastName\": \"Michaels\", \"email\": \"[michael.michaels@example.com](https://mailto:michael.michaels@example.com)\"}\n    \n\n### 2\\. Fetch All Users\n\n- **Method**: GET\n    \n- **URL**: `http://localhost:7074/api/users/allUsers`\n    \n- **Description**: Retrieves a list of all users.\n    \n- **Tests**:\n    \n    - Status code is 200\n        \n    - Response contains fields `id`, `firstName`, `lastName`, and `email`\n        \n    - Email format validation\n        \n    - Content-Type is `application/json`\n        \n    - Response is a non-empty array\n        \n\n### 3\\. Fetch User By Id\n\n- **Method**: GET\n    \n- **URL**: `http://localhost:7074/api/users/fetchById?id=7`\n    \n- **Description**: Retrieves a user by their unique identifier.\n    \n- **Tests**:\n    \n    - Status code is 200\n        \n    - Response contains fields `id`, `firstName`, `lastName`, and `email`\n        \n    - Email format validation\n        \n    - Id is a non-negative integer\n        \n    - FirstName and LastName are non-empty strings\n        \n\n### 4\\. Fetch User by Name\n\n- **Method**: GET\n    \n- **URL**: `http://localhost:7074/api/users/fetchByName?name=Davis`\n    \n- **Description**: Retrieves users by their name.\n    \n- **Tests**:\n    \n    - Status code is 200\n        \n    - Content-Type is `application/json`\n        \n    - Response array structure validation\n        \n    - FirstName and LastName are non-empty strings\n        \n    - Email format validation\n        \n\n### 5\\. Fetch User by Email\n\n- **Method**: GET\n    \n- **URL**: `http://localhost:7074/api/users/fetchByEmail?email=david.williams@example.com`\n    \n- **Description**: Retrieves a user by their email address.\n    \n- **Tests**:\n    \n    - Status code is 200\n        \n    - Response contains fields `id`, `firstName`, `lastName`, and `email`\n        \n    - Email format validation\n        \n    - Content-Type is `application/json`\n        \n    - Id is a non-negative integer\n        \n\n### 6\\. Modify User\n\n- **Method**: PUT\n    \n- **URL**: `http://localhost:7074/api/users/modify?id=6`\n    \n- **Description**: Updates the details of an existing user identified by `id`.\n    \n- { \"id\": 6, \"firstName\": \"David\", \"lastName\": \"Davis\", \"email\": \"[david.williams@example.com](https://mailto:david.williams@example.com)\"}\n    \n\n### 7\\. Delete User\n\n- **Method**: DELETE\n    \n- **URL**: `http://localhost:7074/api/users/delete?id=3`\n    \n- **Description**: Deletes a user identified by `id`.\n    \n\n## How to Use\n\n1. Import the collection into Postman.\n    \n2. Ensure the server is running locally on port `7074`.\n    \n3. Use the predefined requests to interact with the API.\n    \n4. Validate responses using the built-in tests provided in the collection.\n    \n\n## Notes\n\n- The collection assumes the API is running on `localhost` with port `7074`.\n    \n- Modify the base URL in the requests if the server is hosted on a different address or port.\n    \n- The tests included in the collection help ensure the API endpoints are working correctly and that the response data adheres to expected formats and structures.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "33080141"
 	},
@@ -14,7 +14,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"firstName\": \"Michael\",\r\n    \"lastName\": \"Michaels\",\r\n    \"email\": \"michael.michaels@example.com\"\r\n}",
+					"raw": "{\r\n    \"id\": 34,\r\n    \"firstName\": \"Simon\",\r\n    \"lastName\": \"Cowell2\",\r\n    \"email\": \"simon.cowell2@example.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -160,7 +160,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:7074/api/users/fetchById?id=7",
+					"raw": "http://localhost:7074/api/users/fetchById?id=30",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -174,7 +174,7 @@
 					"query": [
 						{
 							"key": "id",
-							"value": "7"
+							"value": "30"
 						}
 					]
 				}
@@ -341,7 +341,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": 6,\r\n    \"firstName\": \"David\",\r\n    \"lastName\": \"Davis\",\r\n    \"email\": \"david.williams@example.com\"\r\n}",
+					"raw": "{\r\n    \"id\": 6,\r\n    \"firstName\": \"David22\",\r\n    \"lastName\": \"Davis2222\",\r\n    \"email\": \"david.williams22222@example.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -376,7 +376,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:7074/api/users/delete?id=3",
+					"raw": "http://localhost:7074/api/users/delete?id=26",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -390,8 +390,58 @@
 					"query": [
 						{
 							"key": "id",
-							"value": "3"
+							"value": "26"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Multiple Users",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"firstName\": \"Alice\",\r\n        \"lastName\": \"Johnson2\",\r\n        \"email\": \"alice.johnson2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Bob\",\r\n        \"lastName\": \"Smith2\",\r\n        \"email\": \"bob.smith2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Charlie\",\r\n        \"lastName\": \"Brown2\",\r\n        \"email\": \"charlie.brown2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"David\",\r\n        \"lastName\": \"Williams\",\r\n        \"email\": \"david.williams@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Emma\",\r\n        \"lastName\": \"Jones2\",\r\n        \"email\": \"emma.jones2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Frank\",\r\n        \"lastName\": \"Garcia2\",\r\n        \"email\": \"frank.garcia2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Grace\",\r\n        \"lastName\": \"Martinez2\",\r\n        \"email\": \"grace.martinez2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Hannah\",\r\n        \"lastName\": \"Lopez2\",\r\n        \"email\": \"hannah.lopez2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Isaac\",\r\n        \"lastName\": \"Gonzalez2\",\r\n        \"email\": \"isaac.gonzalez2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Jack\",\r\n        \"lastName\": \"Wilson2\",\r\n        \"email\": \"jack.wilson2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Kate\",\r\n        \"lastName\": \"Anderson2\",\r\n        \"email\": \"kate.anderson2@example.com\"\r\n    },\r\n    {\r\n        \"firstName\": \"Liam\",\r\n        \"lastName\": \"Thomas2\",\r\n        \"email\": \"liam.thomas2@example.com\"\r\n    }\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7074/api/users/addMultiple",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7074",
+					"path": [
+						"api",
+						"users",
+						"addMultiple"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Shut Down",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7074/actuator/shutdown",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7074",
+					"path": [
+						"actuator",
+						"shutdown"
 					]
 				}
 			},
