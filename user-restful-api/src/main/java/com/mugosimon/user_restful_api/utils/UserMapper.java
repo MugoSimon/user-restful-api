@@ -1,4 +1,4 @@
-package com.mugosimon.user_restful_api.mapper;
+package com.mugosimon.user_restful_api.utils;
 
 import com.mugosimon.user_restful_api.dto.UserDto;
 import com.mugosimon.user_restful_api.entity.User;
